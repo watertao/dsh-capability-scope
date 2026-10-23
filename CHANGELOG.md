@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.1] - 2026-10-23
 
 ### Fixed
 
@@ -37,4 +37,5 @@ First public release.
   `MCP` and `Skill` placeholders with a loading spinner instead of nothing, so
   the row no longer jumps when the counts arrive.
 
+[1.0.1]: https://github.com/watertao/dsh-capability-scope/releases/tag/v1.0.1
 [1.0.0]: https://github.com/watertao/dsh-capability-scope/releases/tag/v1.0.0
