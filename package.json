@@ -37,7 +37,7 @@
     "locale",
     "icon.svg",
     "cordis.patch.yml",
-    "README.en.md",
+    "README.zh-CN.md",
     "CHANGELOG.md"
   ],
   "dsh": {

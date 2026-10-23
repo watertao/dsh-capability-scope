@@ -2,51 +2,51 @@
 
 # dsh-capability-scope
 
-**在 DeepSeek Harness 的输入框里，按会话开关 MCP 服务器、MCP 工具和 Skill，并按工作区记住这些选择**
+**Switch MCP servers, MCP tools, and skills per session from the DeepSeek Harness composer, and remember the choice per workspace**
 
-[English](README.en.md) · [更新日志](CHANGELOG.md) · [MIT](LICENSE)
+[中文](README.zh-CN.md) · [Changelog](CHANGELOG.md) · [MIT](LICENSE)
 
 [![npm](https://img.shields.io/npm/v/dsh-capability-scope.svg)](https://www.npmjs.com/package/dsh-capability-scope)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![DSH](https://img.shields.io/badge/DSH-0.2.x-2563eb.svg)](#兼容性)
+[![DSH](https://img.shields.io/badge/DSH-0.2.x-2563eb.svg)](#compatibility)
 
 </div>
 
-> 社区维护的 DeepSeek Harness（DSH）插件，并非 DeepSeek 官方产品。
+> A community-maintained DeepSeek Harness (DSH) plugin, not an official DeepSeek product.
 
-一个 profile 里往往挂着很多 MCP 服务器和 Skill，但具体到某个项目、某次会话，模型只需要其中一部分。多余的工具会占用上下文，还会诱导模型调用不该用的东西。这个插件在输入框底部加两个按钮 `MCP 3/12` 和 `Skill 4/5`：点开即可按会话裁剪模型能看到的能力，改动立即生效，并作为该目录的默认值保留到下一次。
+A profile tends to carry many MCP servers and skills, while a given project or session needs only some of them. The extra tools take up context and invite calls that should not happen. This plugin adds two buttons to the bottom of the composer, `MCP 3/12` and `Skill 4/5`. Open one to trim what the model can see in this session; the change applies at once and becomes that directory's default for next time.
 
-## 功能
+## Features
 
-- **MCP 服务器开关**：列出 profile 与当前 agent preset 里的全部 MCP 服务器，带连接状态与来源标签。关闭的服务器对本会话隐藏全部工具、拒绝调用，并从系统提示里移除它的说明。只做减法，不会停止服务器进程，也不影响其他会话。
-- **MCP 工具过滤**：点进某个服务器，逐个勾选要保留的工具。没有勾选过时沿用该服务器配置里的 `toolFilter`；服务器之后新增的工具默认隐藏，直到你勾选它。
-- **Skill 开关**：关闭的 Skill 从模型的技能目录、`skill` 工具和输入框 `/` 菜单里一起消失，仅对本会话生效。面板里显示每个 Skill 的来源（如 `project-dsh`、`user-dsh`、`bundled`）、描述和所在目录。
-- **按工作区记忆**：面板上的每次改动都会记为该目录的默认值，下次在同一目录新建会话时自动沿用。
-- **按目录选 preset**：在某个目录新建的空白会话，会自动切到该目录上次选择的 agent preset；没有记录时按 `rules` 配置选。
-- **锁定模式**：`locked: true` 时面板只显示、不能改，能力完全由配置决定，适合统一分发的部署。
+- **MCP server switches**: every MCP server from the profile and the current agent preset, with connection state and origin. A switched-off server's tools are hidden from the session, calls to them are refused, and its instructions leave the system prompt. It only subtracts: the server process keeps running and other sessions are unaffected.
+- **MCP tool filter**: drill into a server and tick the tools to keep. Until you do, the server's own `toolFilter` config applies. Tools the server adds later stay hidden until ticked.
+- **Skill switches**: a switched-off skill leaves the model's skill catalog, the `skill` tool, and the composer's `/` menu, for this session only. The panel shows each skill's source (such as `project-dsh`, `user-dsh`, `bundled`), description, and folder.
+- **Per-workspace memory**: every panel change is remembered as that directory's default, and the next session opened there starts the same way.
+- **Preset per directory**: a blank session opened in a directory switches to the agent preset last selected there, or to the one your `rules` name.
+- **Locked mode**: with `locked: true` the panel is read-only and the configuration alone decides, for centrally managed deployments.
 
-## 截图
+## Screenshots
 
-**Skill 开关：**
+**Skill toggles:**
 
-![Skill 开关面板](assets/skill.png)
+![Skill toggle panel](assets/skill.png)
 
-## 安装
+## Install
 
-需要 DSH 0.2.x，Web 或 Desktop profile。
+Requires DSH 0.2.x with the Web or Desktop profile.
 
 ```sh
 dsh plugin --profile web add dsh-capability-scope
 ```
 
-重启 DSH 后，输入框底部（权限模式按钮右侧）会出现 `MCP` 和 `Skill` 两个按钮。Desktop 把 `web` 换成 `desktop`。
+Restart DSH. The `MCP` and `Skill` buttons appear at the bottom of the composer, to the right of the permission control. For Desktop, use `--profile desktop`.
 
-在 headless 等没有 Web UI 的 profile 里也可以安装：此时没有面板，但目录记忆和 `defaultOff` 照常生效。
+Profiles without a Web UI (such as headless) can install it too: there is no panel, but directory memory and `defaultOff` still apply.
 
 <details>
-<summary>从源码挂载（开发用）</summary>
+<summary>Mount from source (development)</summary>
 
-在 profile 的 `cordis.patch.yml`（`$DSH_HOME/profiles/<profile>/cordis.patch.yml`）里用绝对路径插入一行。浏览器半边会沿路径向上找到本包的 `package.json`，自动加载：
+Insert a row by absolute path in the profile's `cordis.patch.yml` (`$DSH_HOME/profiles/<profile>/cordis.patch.yml`). The browser half is found by walking up to this package's `package.json`:
 
 ```yaml
 - insert:
@@ -56,94 +56,94 @@ dsh plugin --profile web add dsh-capability-scope
 
 </details>
 
-## 使用
+## Usage
 
-**MCP 面板**
+**MCP panel**
 
-- 每行一个服务器：状态点、名称、来源标签（`profile` / `preset` / `未登记`），括号里是「保留的工具数/总数」，服务器连不上时显示状态。
-- 点左侧 `›` 进入该服务器的工具列表，勾选要保留的工具；底部「恢复默认」回到配置里的 `toolFilter`。
-- 底部「全部开启 / 全部关闭」只作用于当前过滤后可见的条目；「恢复默认」回到 `defaultOff`。
+- One row per server: state dot, name, origin tag (`profile` / `preset` / `unlisted`), and the kept/total tool count in parentheses, or the state when the server cannot serve tools.
+- Click `›` to open the server's tools and tick the ones to keep; **Reset** returns to the configured `toolFilter`.
+- **All on / All off** at the bottom act only on the rows the filter shows; **Back to default** returns to `defaultOff`.
 
-**Skill 面板**
+**Skill panel**
 
-- 每个 Skill 三行：名称和来源标签、描述、所在目录（家目录缩写为 `~`；运行期注册的 Skill 没有目录）。悬停查看完整内容。
-- 被关掉的 Skill 仍然列在面板里，方便随时打开。
+- Three lines per skill: name with source tag, description, and folder (home shortened to `~`; runtime skills have none). Hover for the full text.
+- Switched-off skills stay listed, so they are one click away.
 
-条目超过 13 个时，标题下方会出现过滤框：MCP 按服务器名匹配；Skill 按名称、描述、目录和来源匹配。
+Lists longer than 13 rows get a filter box under the title: MCP matches server names; skills match name, description, folder, and source.
 
 > [!NOTE]
-> 对已经开始对话的会话做改动，会改变模型可见的工具或 Skill，导致提示缓存失效，下一轮请求的成本会上升。最好在会话开始前调好。
+> Changing a session that has already started changes the tools or skills the model sees, which invalidates the prompt cache and makes the next request cost more. Set things up before the first message when you can.
 
-## 配置
+## Configuration
 
-所有配置项都是可选的。要修改，在 profile 自己的 `cordis.patch.yml` 里按 id 覆盖这一行（覆盖会**整体替换** config，需要写全你要的键）：
+Every key is optional. To change one, override the row by id in the profile's own `cordis.patch.yml`. An override **replaces the whole config block**, so list every key you want:
 
 ```yaml
 - id: dsh-capability-scope
   config:
-    rules:                        # 没有记忆的目录按路径选 preset（含子目录，最长匹配优先）
+    rules:                        # preset by path for directories with no memory (subdirectories included, longest match wins)
       - path: ~/work/payment-service
         preset: backend-tools
-    defaultOff:                   # 没有记忆的目录默认关闭的服务器 / Skill
+    defaultOff:                   # servers / skills off in directories with no memory
       mcp: [tdoc]
       skills: []
 ```
 
-| 字段 | 默认 | 说明 |
+| Key | Default | Meaning |
 |---|---|---|
-| `rules` | `[]` | `{ path, preset }` 列表。只用于没有 preset 记忆的空白会话；`path` 必须是绝对路径（可用 `~`），匹配该目录及其子目录 |
-| `defaultOff.mcp` | `[]` | 没有记忆的目录默认关闭的 MCP 服务器（`serverName`） |
-| `defaultOff.skills` | `[]` | 没有记忆的目录默认关闭的 Skill |
-| `remember` | `true` | 是否按目录记住面板改动和 preset 选择。关闭后改动只对当前会话有效 |
-| `locked` | `false` | 面板只读：写入请求返回 403，不读也不写目录记忆（即 `remember` 视为 `false`）。MCP 工具由 `toolFilter` 决定，开关由 `defaultOff` 决定 |
-| `enforceGuard` | `true` | 除了隐藏，还拒绝对被隐藏工具的调用 |
-| `memoryPath` | profile 目录下的 `.capability-scope.json` | 记忆文件位置，必须是绝对路径 |
-| `echoToConsole` | `true` | 诊断信息同时打印到 stdout / stderr |
+| `rules` | `[]` | `{ path, preset }` list, used only for blank sessions with no remembered preset. `path` must be absolute (`~` allowed) and matches the directory and its subdirectories |
+| `defaultOff.mcp` | `[]` | MCP servers (`serverName`) off by default in directories with no memory |
+| `defaultOff.skills` | `[]` | Skills off by default in directories with no memory |
+| `remember` | `true` | Remember panel changes and preset picks per directory. When off, changes last for the session only |
+| `locked` | `false` | Read-only panel: writes answer 403 and directory memory is neither read nor written (`remember` counts as `false`). MCP tools follow `toolFilter`, switches follow `defaultOff` |
+| `enforceGuard` | `true` | Besides hiding, also refuse calls to hidden tools |
+| `memoryPath` | `.capability-scope.json` in the profile directory | Memory file; must be absolute |
+| `echoToConsole` | `true` | Mirror diagnostics to stdout / stderr |
 
-几条规则：
+A few rules:
 
-- **目录记忆按精确路径匹配**，子目录算作「没有记忆的目录」；`rules` 则包含子目录。
-- **`defaultOff` 是黑名单**：之后新增的服务器或 Skill 默认是开启的。
-- preset 只会替**空白的顶层会话**切换：已开始的会话、子代理、显式指定了 preset 的会话（如 Creator 模式）以及手动改过 preset 的会话都不会被改动。
+- **Directory memory matches the exact path**; a subdirectory counts as a directory with no memory. `rules` do cover subdirectories.
+- **`defaultOff` is a deny list**: servers and skills added later start on.
+- Presets are switched only for **blank top-level sessions**. Started sessions, subagents, sessions with an explicit preset (such as Creator mode), and sessions whose preset was changed by hand are left alone.
 
-## 工作原理
+## How it works
 
-| 能力 | 实现 |
+| Capability | Mechanism |
 |---|---|
-| 隐藏 MCP 工具 | `agent.ctx.tools.restrict({ deny })`，能遮住从全局层和 preset 作用域继承的工具；`agent.ctx.tools.guard()` 拒绝调用（资源工具按 `server` 参数判断） |
-| 移除服务器说明 | 在会话层注册同名的空 `mcp:<server>` 提示段，并重写 `mcp-resource-servers` 段 |
-| 关闭 Skill | 在会话层注册同名、模型和用户都不可调用的影子 Skill；Skill 注册表按「离会话最近的一层优先」合并，影子就盖住了原 Skill |
-| 刷新 `/` 菜单 | Skill 开关变化后为该会话重发一次当前 preset 的 `agent-preset/selected`，浏览器据此丢弃 Skill 缓存。这个事件不写入会话，也不会被记成该目录的 preset |
-| 记忆 | profile 目录下的 `.capability-scope.json`，按目录保存 preset、关闭列表、工具白名单，以及被关闭 Skill 的描述、目录和来源（Skill 关闭后无法再从会话视图读到这些信息） |
+| Hide MCP tools | `agent.ctx.tools.restrict({ deny })`, which masks tools inherited from the global layer and the preset scope; `agent.ctx.tools.guard()` refuses calls (resource tools by their `server` argument) |
+| Drop server instructions | Empty same-name `mcp:<server>` prompt sections in the session layer, plus a restated `mcp-resource-servers` section |
+| Switch off a skill | A same-name shadow skill in the session layer that neither model nor user can invoke; the skill registry merges nearest layer last, so the shadow wins |
+| Refresh the `/` menu | After a skill switch, re-emit `agent-preset/selected` for the session's current preset so browsers drop its skill cache. Nothing is appended to the session and it is not remembered as the directory's preset |
+| Memory | `.capability-scope.json` in the profile directory: per directory, the preset, off lists, tool allow-lists, and the description, folder, and source of switched-off skills (which the session's own view can no longer show) |
 
-面板通过 `GET /dsh-capability-scope/session?id=<sessionId>` 读取状态，通过 `POST /dsh-capability-scope/session`（body 带 `id` 和 `mcpOff` / `skillsOff` / `filter` 之一）写入。
+The panel reads with `GET /dsh-capability-scope/session?id=<sessionId>` and writes with `POST /dsh-capability-scope/session` (body: `id` plus one of `mcpOff` / `skillsOff` / `filter`).
 
-## 兼容性
+## Compatibility
 
-在 DSH **0.2.0-rc.2** 上开发和测试，`peerDependencies` 声明为 `>=0.2.0-rc.2 <0.3.0-0`，超出范围时 `dsh plugin add` 会拒绝安装。Node.js ≥ 20。
+Developed and tested on DSH **0.2.0-rc.2**. `peerDependencies` declares `>=0.2.0-rc.2 <0.3.0-0`, so `dsh plugin add` refuses other runtimes. Node.js ≥ 20.
 
-插件读取了宿主的几处内部接口：`agentPresets.definitions`（读 preset 的 MCP 行和作用域）、`agentPresets.serviceFor / composedPreset / select / defaultId`、`ctx.tools.schemas / restrict / guard`、`skills.register / snapshot`、`sessionProjections.stateOf`、`mcpResources.layers`。这些接口变化时插件会降级，而不是挂载失败：
+The plugin reads several host internals: `agentPresets.definitions` (preset MCP rows and scope), `agentPresets.serviceFor / composedPreset / select / defaultId`, `ctx.tools.schemas / restrict / guard`, `skills.register / snapshot`, `sessionProjections.stateOf`, and `mcpResources.layers`. When they change, it degrades instead of failing to mount:
 
-- `definitions` 不可读：preset 里的服务器显示为「未登记」，不显示连接状态；工具仍按名字归到对应服务器。
-- 宿主不再在 `agent-preset/selected` 时丢弃 Skill 缓存：Skill 开关仍然生效，只是 `/` 菜单要到新会话才更新。
+- `definitions` unreadable: preset servers show as `unlisted` without connection state; tools are still attributed by name.
+- The host stops dropping the skill cache on `agent-preset/selected`: skill switches still apply, but the `/` menu updates only in a new session.
 
-## 开发
+## Development
 
 ```sh
-npm test          # 用模拟宿主跑冒烟测试，无需安装任何依赖
+npm test          # smoke tests against a fake host; no dependencies to install
 npm run pack:check
 ```
 
-| 路径 | 内容 |
+| Path | Contents |
 |---|---|
-| `src/index.mjs` | 宿主半边：会话状态、工具限制、影子 Skill、preset 选择、HTTP 接口 |
-| `src/memory.mjs` | 工作区记忆文件的读写 |
-| `src/names.mjs` | MCP 公开工具名与 `toolFilter` 匹配（与 `dsh-mcp-client` 的命名规则一致，由 `test/golden-names.json` 锁定） |
-| `lib/client.js` | 浏览器半边：输入框按钮与面板（无需构建） |
-| `cordis.patch.yml` | `dsh plugin add` 使用的 bundle 补丁 |
+| `src/index.mjs` | Host half: session state, tool restriction, shadow skills, preset choice, HTTP API |
+| `src/memory.mjs` | Workspace memory file |
+| `src/names.mjs` | MCP public tool names and `toolFilter` matching (same rules as `dsh-mcp-client`, locked by `test/golden-names.json`) |
+| `lib/client.js` | Browser half: composer buttons and panels (no build step) |
+| `cordis.patch.yml` | Bundle patch used by `dsh plugin add` |
 
-欢迎提 Issue 和 PR。
+Issues and pull requests are welcome.
 
-## 许可证
+## License
 
 [MIT](LICENSE)
