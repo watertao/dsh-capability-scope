@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- A session restored from disk with no running agent no longer shows the `MCP`
+  and `Skill` loading placeholders forever. After an 8-second grace the
+  placeholders are hidden and the retry slows from every 2 seconds to every 6,
+  so the triggers still come back within seconds once a message resumes the
+  agent.
+
 ## [1.0.0] - 2026-10-23
 
 First public release.
