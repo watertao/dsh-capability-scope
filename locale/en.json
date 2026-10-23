@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Capability Scope",
+    "description": "Switch MCP servers, MCP tools, and skills per session from the composer, and remember them with the agent preset per workspace."
+  }
+}

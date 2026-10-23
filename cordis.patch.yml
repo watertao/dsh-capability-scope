@@ -1,0 +1,19 @@
+# dsh-capability-scope bundle patch: one host row for the Web or Desktop profile.
+# `dsh plugin --profile <profile> add dsh-capability-scope` mounts it; the row
+# name resolves from the profile's node_modules, and the browser half loads
+# through this package's `dsh.client`.
+#
+# Every config key is optional. To configure, override this row by id in the
+# profile's own cordis.patch.yml (an override replaces the whole config block):
+#
+#   - id: dsh-capability-scope
+#     config:
+#       rules:
+#         - path: ~/work/my-project
+#           preset: my-preset
+#       defaultOff:
+#         mcp: [some-server]
+#         skills: []
+- insert:
+    - id: dsh-capability-scope
+      name: dsh-capability-scope

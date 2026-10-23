@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Dependencies
+node_modules/
+
+# Hand-made backups (e.g. *.bak-0.1.5)
+*.bak
+*.bak-*
+
+# Logs, coverage, local env
+*.log
+coverage/
+.env
+.env.*
