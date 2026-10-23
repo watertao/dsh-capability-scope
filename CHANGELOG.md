@@ -4,15 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
-
-### Changed
-
-- While a session's agent is still resuming, the composer shows greyed-out
-  `MCP` and `Skill` placeholders with a loading spinner instead of nothing, so
-  the row no longer jumps when the counts arrive.
-
-## [0.1.0] - 2026-10-23
+## [1.0.0] - 2026-10-23
 
 First public release.
 
@@ -29,4 +21,10 @@ First public release.
   `echoToConsole` configuration.
 - Bundle patch for `dsh plugin add`, Plugin Manager title, description, and icon.
 
-[0.1.0]: https://github.com/watertao/dsh-capability-scope/releases/tag/v0.1.0
+### Changed
+
+- While a session's agent is still resuming, the composer shows greyed-out
+  `MCP` and `Skill` placeholders with a loading spinner instead of nothing, so
+  the row no longer jumps when the counts arrive.
+
+[1.0.0]: https://github.com/watertao/dsh-capability-scope/releases/tag/v1.0.0

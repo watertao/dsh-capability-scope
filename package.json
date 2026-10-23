@@ -1,6 +1,6 @@
 {
   "name": "dsh-capability-scope",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "DeepSeek Harness plugin: switch MCP servers, MCP tools, and skills per session from the composer, and remember them (with the agent preset) per workspace directory.",
   "keywords": [
     "deepseek-harness",
