@@ -27,10 +27,6 @@
 
 ## 截图
 
-**MCP 服务器开关：**
-
-![MCP 服务器开关面板](assets/mcp.png)
-
 **Skill 开关：**
 
 ![Skill 开关面板](assets/skill.png)

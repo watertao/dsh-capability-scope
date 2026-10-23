@@ -27,10 +27,6 @@ A profile tends to carry many MCP servers and skills, while a given project or s
 
 ## Screenshots
 
-**MCP server toggles:**
-
-![MCP server toggle panel](assets/mcp.png)
-
 **Skill toggles:**
 
 ![Skill toggle panel](assets/skill.png)
