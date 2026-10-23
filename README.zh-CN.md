@@ -33,7 +33,7 @@
 
 ## 安装
 
-需要 DSH 0.2.x，Web 或 Desktop profile。
+需要 DSH 0.2.x，Web 或 Desktop profile。该命令从 npm 安装本包：
 
 ```sh
 dsh plugin --profile web add dsh-capability-scope

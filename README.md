@@ -33,7 +33,8 @@ A profile tends to carry many MCP servers and skills, while a given project or s
 
 ## Install
 
-Requires DSH 0.2.x with the Web or Desktop profile.
+Requires DSH 0.2.x with the Web or Desktop profile. The command installs the
+package from npm:
 
 ```sh
 dsh plugin --profile web add dsh-capability-scope
