@@ -25,6 +25,16 @@ A profile tends to carry many MCP servers and skills, while a given project or s
 - **Preset per directory**: a blank session opened in a directory switches to the agent preset last selected there, or to the one your `rules` name.
 - **Locked mode**: with `locked: true` the panel is read-only and the configuration alone decides, for centrally managed deployments.
 
+## Screenshots
+
+**MCP server toggles:**
+
+![MCP server toggle panel](assets/mcp.png)
+
+**Skill toggles:**
+
+![Skill toggle panel](assets/skill.png)
+
 ## Install
 
 Requires DSH 0.2.x with the Web or Desktop profile.

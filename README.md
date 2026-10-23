@@ -25,6 +25,16 @@
 - **按目录选 preset**：在某个目录新建的空白会话，会自动切到该目录上次选择的 agent preset；没有记录时按 `rules` 配置选。
 - **锁定模式**：`locked: true` 时面板只显示、不能改，能力完全由配置决定，适合统一分发的部署。
 
+## 截图
+
+**MCP 服务器开关：**
+
+![MCP 服务器开关面板](assets/mcp.png)
+
+**Skill 开关：**
+
+![Skill 开关面板](assets/skill.png)
+
 ## 安装
 
 需要 DSH 0.2.x，Web 或 Desktop profile。
