@@ -789,16 +789,23 @@ export function apply(ctx, rawConfig) {
     // Explicitly requested (Creator mode's `cordis`), or already picked by hand.
     if (header.agentPreset !== registry.defaultId || current !== header.agentPreset) return
     if (!isBlank(agent.session)) return
-    // Deferred past the creating call, which still attaches the session to its
-    // workspace; a pick staged on the new-task screen may land first and wins.
-    setTimeout(() => {
+    // `agent/created` runs inside the host's creation transaction: a switch
+    // there re-parents the agent's scope while later listeners still install
+    // into it, and the whole creation fails ("cannot create effect on inactive
+    // context"). Creation runs as an agent maintenance task, so `whenIdle()`
+    // settles once it is over; the timer then lets a failed creation finish
+    // disposing and the creating call attach the session to its workspace. A
+    // pick staged on the new-task screen may land first and wins.
+    const created = typeof agent.whenIdle === 'function' ? agent.whenIdle() : Promise.resolve()
+    created.then(() => setTimeout(() => {
+      if (live.get(agent.session.id)?.agent !== agent) return
       if (projectedPreset(agent) !== current || !isBlank(agent.session)) return
       const why = remembered !== undefined ? 'last selected here' : 'workspace rule'
       registry.select(agent, target).then(
         (selected) => log('info', `session ${agent.session.id} (${cwd}) — preset ${current} → ${selected} (${why})`),
         (error) => log('warn', `session ${agent.session.id} (${cwd}) — could not switch to preset "${target}" (${why}): ${messageOf(error)}`),
       )
-    }, 0)
+    }, 0))
   }
 
   // `agent/created` is awaited while the session is published: nothing here may throw.

@@ -149,8 +149,9 @@ function createHarness({ config = {}, profileServers = [], presets = {}, globalS
     inject: (_deps, callback) => callback({ ...ctx, webServer: { register: (route) => { routes.push(route); return () => {} } } }),
   }
 
-  const createAgent = (id, { preset = 'standard', cwd = WS, header = {}, turns = 0 } = {}) => {
-    const agent = { id, session: { id, header: { cwd, agentPreset: preset, ...header } } }
+  const createAgent = (id, { preset = 'standard', cwd = WS, header = {}, turns = 0, creating } = {}) => {
+    // `creating` holds the host's creation transaction open until it resolves.
+    const agent = { id, session: { id, header: { cwd, agentPreset: preset, ...header } }, whenIdle: () => creating ?? Promise.resolve() }
     agentPreset.set(agent, preset)
     projections.set(id, { turnBoundary: { openTurnStartSeq: null, lastTurn: turns }, agentPreset: preset })
     const layer = new Map()
@@ -416,6 +417,25 @@ test('a blank session takes the preset last selected in its directory, over the 
   harness.createAgent('p3')
   await settle(10)
   assert.deepEqual(harness.selected.map(([id]) => id), ['p1', 'p2'])
+})
+
+test('the directory preset is selected only after the host finishes creating the session', async () => {
+  const harness = mpHarness({ config: { rules: [{ path: WS, preset: 'mp-tools' }] } })
+  const creation = Promise.withResolvers()
+  harness.createAgent('c1', { creating: creation.promise })
+  await settle(10)
+  // Still inside the creation transaction: switching now would fail it.
+  assert.deepEqual(harness.selected, [])
+  creation.resolve()
+  await settle(10)
+  assert.deepEqual(harness.selected, [['c1', 'mp-tools']])
+  // A creation that failed and disposed the agent is left alone.
+  const failed = Promise.withResolvers()
+  const { dispose } = harness.createAgent('c2', { creating: failed.promise })
+  dispose()
+  failed.resolve()
+  await settle(10)
+  assert.deepEqual(harness.selected, [['c1', 'mp-tools']])
 })
 
 test('switching presets drops servers hidden under the previous preset from the view', async () => {
