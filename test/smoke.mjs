@@ -26,6 +26,13 @@ import { compileToolFilter, publicToolName } from '../src/names.mjs'
 const golden = JSON.parse(readFileSync(new URL('./golden-names.json', import.meta.url), 'utf8'))
 const WS = '/tmp/dcs-ws'
 
+// `Promise.withResolvers` needs Node 22; the CI matrix starts at Node 20.
+function deferred() {
+  let resolve
+  const promise = new Promise((res) => { resolve = res })
+  return { promise, resolve }
+}
+
 function createHarness({ config = {}, profileServers = [], presets = {}, globalSkills = [], presetSkills = {}, profile } = {}) {
   const profileDir = profile ?? mkdtempSync(join(tmpdir(), 'dcs-profile-'))
   const rootTools = new Set()
@@ -421,7 +428,7 @@ test('a blank session takes the preset last selected in its directory, over the 
 
 test('the directory preset is selected only after the host finishes creating the session', async () => {
   const harness = mpHarness({ config: { rules: [{ path: WS, preset: 'mp-tools' }] } })
-  const creation = Promise.withResolvers()
+  const creation = deferred()
   harness.createAgent('c1', { creating: creation.promise })
   await settle(10)
   // Still inside the creation transaction: switching now would fail it.
@@ -430,7 +437,7 @@ test('the directory preset is selected only after the host finishes creating the
   await settle(10)
   assert.deepEqual(harness.selected, [['c1', 'mp-tools']])
   // A creation that failed and disposed the agent is left alone.
-  const failed = Promise.withResolvers()
+  const failed = deferred()
   const { dispose } = harness.createAgent('c2', { creating: failed.promise })
   dispose()
   failed.resolve()
