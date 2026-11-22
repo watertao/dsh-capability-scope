@@ -568,6 +568,21 @@ test('the browser half declares its services and registers one composer slot', (
   assert.ok(Array.isArray(manifest.dsh.client.inject))
 })
 
+test('the browser half uses no client API that DSH 0.2.2 removed', () => {
+  const source = readFileSync(new URL('../lib/client.js', import.meta.url), 'utf8')
+  // Removed with the CSS-anchor switch (upgrade guide v0.2.2-alpha.2,
+  // css-anchored-menus). Importing it yields undefined, so the slot component
+  // throws on its first render and the composer entries disappear.
+  assert.ok(!source.includes('useAnchoredPosition'), 'useAnchoredPosition is gone from @deepseek-ai/dsh-client-ui-primitives')
+  assert.ok(!source.includes('AnchoredPositionOptions'))
+  assert.ok(!source.includes('getAnchorRect'))
+  // The panel must position itself from the trigger's CSS anchor name instead.
+  assert.match(source, /anchor-name: --dcs-mcp-anchor/)
+  assert.match(source, /anchor-name: --dcs-skill-anchor/)
+  assert.match(source, /position-anchor: var\(--dcs-panel-anchor/)
+  assert.match(source, /bottom: calc\(anchor\(top\) \+ 6px\)/)
+})
+
 test('invalid config fails at load', () => {
   assert.throws(() => createHarness({ config: { rules: [{ path: 'rel', preset: 'x' }] } }), /absolute/)
   assert.throws(() => createHarness({ config: { defaultOff: ['tdoc'] } }), /defaultOff/)

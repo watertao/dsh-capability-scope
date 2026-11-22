@@ -120,7 +120,9 @@ dsh plugin --profile web add dsh-capability-scope
 
 ## 兼容性
 
-在 DSH **0.2.0-rc.2** 上开发和测试，`peerDependencies` 声明为 `>=0.2.0-rc.2 <0.3.0-0`，超出范围时 `dsh plugin add` 会拒绝安装。Node.js ≥ 20。
+在 DSH **0.2.0-rc.2** 和 **0.2.2-rc.2** 上开发和测试，`peerDependencies` 声明为 `>=0.2.0-rc.2 <0.3.0-0`，超出范围时 `dsh plugin add` 会拒绝安装。Node.js ≥ 20。
+
+浏览器半边用 CSS 锚点定位（`anchor-name` / `position-anchor` / `anchor()`）摆放面板，不依赖平台的 JavaScript 定位钩子，所以同一份 bundle 在两条线上都能用：DSH 0.2.2 已从 `@deepseek-ai/dsh-client-ui-primitives` 移除 `useAnchoredPosition`。
 
 插件读取了宿主的几处内部接口：`agentPresets.definitions`（读 preset 的 MCP 行和作用域）、`agentPresets.serviceFor / composedPreset / select / defaultId`、`ctx.tools.schemas / restrict / guard`、`skills.register / snapshot`、`sessionProjections.stateOf`、`mcpResources.layers`。这些接口变化时插件会降级，而不是挂载失败：
 

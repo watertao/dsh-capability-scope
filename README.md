@@ -121,7 +121,9 @@ The panel reads with `GET /dsh-capability-scope/session?id=<sessionId>` and writ
 
 ## Compatibility
 
-Developed and tested on DSH **0.2.0-rc.2**. `peerDependencies` declares `>=0.2.0-rc.2 <0.3.0-0`, so `dsh plugin add` refuses other runtimes. Node.js ≥ 20.
+Developed and tested on DSH **0.2.0-rc.2** and **0.2.2-rc.2**. `peerDependencies` declares `>=0.2.0-rc.2 <0.3.0-0`, so `dsh plugin add` refuses other runtimes. Node.js ≥ 20.
+
+The browser half positions its panel with CSS anchor positioning (`anchor-name` / `position-anchor` / `anchor()`), not with the platform's JavaScript placement hook, so the same bundle runs on both lines: DSH 0.2.2 removed `useAnchoredPosition` from `@deepseek-ai/dsh-client-ui-primitives`.
 
 The plugin reads several host internals: `agentPresets.definitions` (preset MCP rows and scope), `agentPresets.serviceFor / composedPreset / select / defaultId`, `ctx.tools.schemas / restrict / guard`, `skills.register / snapshot`, `sessionProjections.stateOf`, and `mcpResources.layers`. When they change, it degrades instead of failing to mount:
 
